@@ -8,4 +8,5 @@ export interface Customer {
   queueId: string;
   positionsPassed: number;
   serviceId?: string;
+  timestamp: string;
 }

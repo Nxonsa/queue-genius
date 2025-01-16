@@ -3,6 +3,7 @@ import CheckInForm from "@/components/CheckInForm";
 import QueueDisplay from "@/components/QueueDisplay";
 import QRCodeDisplay from "@/components/QRCodeDisplay";
 import StaffDashboard from "@/components/StaffDashboard";
+import CustomerAnalytics from "@/components/CustomerAnalytics";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { Customer } from "@/types/customer";
@@ -28,16 +29,8 @@ const Index = () => {
       queueId,
       positionsPassed: 0,
       serviceId,
+      timestamp: new Date().toISOString(),
     };
-
-    if (marketingConsent) {
-      // Store marketing data locally
-      console.log("Marketing consent given, storing data locally:", { 
-        name, 
-        phone, 
-        timestamp: new Date().toISOString() 
-      });
-    }
 
     setCustomers((prev) => [...prev, newCustomer]);
     setCurrentCustomer(newCustomer);
@@ -128,11 +121,14 @@ const Index = () => {
           </TabsContent>
 
           <TabsContent value="staff" className="animate-fade-in">
+            <CustomerAnalytics customers={customers} />
             <StaffDashboard
               customers={customers}
               onCallNext={handleCallNext}
               onRemoveCustomer={handleRemoveCustomer}
               isManager={true}
+              services={services}
+              setServices={setServices}
             />
           </TabsContent>
         </Tabs>
