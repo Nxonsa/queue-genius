@@ -22,6 +22,8 @@ interface StaffDashboardProps {
   onCallNext: () => void;
   onRemoveCustomer: (id: string) => void;
   isManager?: boolean;
+  services: Service[];
+  setServices: (services: Service[]) => void;
 }
 
 const StaffDashboard: React.FC<StaffDashboardProps> = ({
@@ -29,13 +31,14 @@ const StaffDashboard: React.FC<StaffDashboardProps> = ({
   onCallNext,
   onRemoveCustomer,
   isManager = false,
+  services,
+  setServices,
 }) => {
   const { toast } = useToast();
   const [isAnnouncing, setIsAnnouncing] = React.useState(false);
   const [counters, setCounters] = React.useState<Counter[]>([
     { id: "1", name: "Counter 1", staffName: "John Doe", isActive: true },
   ]);
-  const [services, setServices] = React.useState<Service[]>([]);
   const [sheetsUrl, setSheetsUrl] = React.useState("");
 
   const handleCallNext = () => {
