@@ -26,16 +26,16 @@ const ServiceSection: React.FC<ServiceSectionProps> = ({ services, setServices, 
   };
 
   return (
-    <div className="mb-6 animate-fade-in">
-      <div className="flex justify-between items-center mb-4">
+    <div className="mb-4 md:mb-6 animate-fade-in">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 space-y-2 md:space-y-0">
         <h3 className="text-lg font-semibold">Services</h3>
         <Button onClick={handleSave}>Save Changes</Button>
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {localServices.map((service) => (
           <Card key={service.id} className="p-3">
-            <div className="flex justify-between items-center">
-              <div className="w-full space-y-2">
+            <div className="flex flex-col space-y-2">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-2 md:space-y-0">
                 <Input
                   value={service.name}
                   onChange={(e) => {
@@ -44,28 +44,29 @@ const ServiceSection: React.FC<ServiceSectionProps> = ({ services, setServices, 
                     );
                     setLocalServices(updatedServices);
                   }}
-                  className="mb-2"
+                  className="w-full md:w-2/3"
+                  placeholder="Service Name"
                 />
-                <select
-                  value={service.counterId}
-                  onChange={(e) => {
-                    const updatedServices = localServices.map(s =>
-                      s.id === service.id ? { ...s, counterId: e.target.value } : s
-                    );
-                    setLocalServices(updatedServices);
-                  }}
-                  className="w-full p-2 rounded border"
-                >
-                  {counters.map(counter => (
-                    <option key={counter.id} value={counter.id}>
-                      {counter.name}
-                    </option>
-                  ))}
-                </select>
+                <Badge variant={service.isActive ? "default" : "secondary"}>
+                  {service.isActive ? "Active" : "Inactive"}
+                </Badge>
               </div>
-              <Badge variant={service.isActive ? "default" : "secondary"}>
-                {service.isActive ? "Active" : "Inactive"}
-              </Badge>
+              <select
+                value={service.counterId}
+                onChange={(e) => {
+                  const updatedServices = localServices.map(s =>
+                    s.id === service.id ? { ...s, counterId: e.target.value } : s
+                  );
+                  setLocalServices(updatedServices);
+                }}
+                className="w-full p-2 rounded border"
+              >
+                {counters.map(counter => (
+                  <option key={counter.id} value={counter.id}>
+                    {counter.name}
+                  </option>
+                ))}
+              </select>
             </div>
           </Card>
         ))}

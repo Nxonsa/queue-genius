@@ -40,20 +40,20 @@ const CounterSection: React.FC<CounterSectionProps> = ({ counters, setCounters }
   };
 
   return (
-    <div className="mb-6 animate-fade-in">
-      <div className="flex justify-between items-center mb-4">
+    <div className="mb-4 md:mb-6 animate-fade-in">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 space-y-2 md:space-y-0">
         <h3 className="text-lg font-semibold">Counters</h3>
         <Button onClick={handleSave}>Save Changes</Button>
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {localCounters.map((counter) => (
           <Card key={counter.id} className="p-3">
             <div className="space-y-2">
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-2 md:space-y-0">
                 <Input
                   value={counter.name}
                   onChange={(e) => handleNameChange(counter.id, e.target.value)}
-                  className="mb-2"
+                  className="w-full md:w-2/3"
                   placeholder="Counter Name"
                 />
                 <Badge variant={counter.isActive ? "default" : "secondary"}>

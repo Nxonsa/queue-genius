@@ -8,13 +8,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Users, Settings, Plus } from "lucide-react";
+import { Users, Settings } from "lucide-react";
 import { Service } from "@/types/service";
 import { Counter } from "@/types/counter";
 import { Customer } from "@/types/customer";
 import CounterSection from "./staff/CounterSection";
 import ServiceSection from "./staff/ServiceSection";
 import QueueSection from "./staff/QueueSection";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface StaffDashboardProps {
   customers: Customer[];
@@ -34,6 +35,7 @@ const StaffDashboard: React.FC<StaffDashboardProps> = ({
   setServices,
 }) => {
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [isAnnouncing, setIsAnnouncing] = React.useState(false);
   const [counters, setCounters] = React.useState<Counter[]>([
     { id: "1", name: "Counter 1", staffName: "John Doe", isActive: true },
@@ -96,11 +98,11 @@ const StaffDashboard: React.FC<StaffDashboardProps> = ({
   };
 
   return (
-    <Card className="p-6 backdrop-blur-lg bg-card/80 shadow-lg animate-fade-in">
-      <div className="flex items-center justify-between mb-6">
+    <Card className="p-4 md:p-6 backdrop-blur-lg bg-card/80 shadow-lg animate-fade-in w-full overflow-x-hidden">
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 md:mb-6 space-y-2 md:space-y-0">
         <div className="flex items-center space-x-2">
           <Users className="w-5 h-5 text-primary" />
-          <h2 className="text-xl font-semibold">Staff Dashboard</h2>
+          <h2 className="text-lg md:text-xl font-semibold">Staff Dashboard</h2>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -126,23 +128,25 @@ const StaffDashboard: React.FC<StaffDashboardProps> = ({
         </DropdownMenu>
       </div>
 
-      {isManager && (
-        <>
-          <CounterSection counters={counters} setCounters={setCounters} />
-          <ServiceSection 
-            services={services}
-            setServices={setServices}
-            counters={counters}
-          />
-        </>
-      )}
+      <div className="space-y-4 md:space-y-6">
+        {isManager && (
+          <>
+            <CounterSection counters={counters} setCounters={setCounters} />
+            <ServiceSection 
+              services={services}
+              setServices={setServices}
+              counters={counters}
+            />
+          </>
+        )}
 
-      <QueueSection
-        customers={customers}
-        isAnnouncing={isAnnouncing}
-        onCallNext={handleCallNext}
-        onRemoveCustomer={onRemoveCustomer}
-      />
+        <QueueSection
+          customers={customers}
+          isAnnouncing={isAnnouncing}
+          onCallNext={handleCallNext}
+          onRemoveCustomer={onRemoveCustomer}
+        />
+      </div>
     </Card>
   );
 };
