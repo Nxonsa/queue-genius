@@ -12,7 +12,12 @@ import { Service } from "@/types/service";
 const Index = () => {
   const [customers, setCustomers] = React.useState<Customer[]>([]);
   const [currentCustomer, setCurrentCustomer] = React.useState<Customer | null>(null);
-  const [services, setServices] = React.useState<Service[]>([]);
+  const [services, setServices] = React.useState<Service[]>([
+    { id: "1", name: "General Inquiry", counterId: "1", isActive: true },
+    { id: "2", name: "Account Services", counterId: "1", isActive: true },
+    { id: "3", name: "Technical Support", counterId: "1", isActive: true },
+    { id: "4", name: "Payments", counterId: "1", isActive: true },
+  ]);
   const { toast } = useToast();
 
   console.log("Current queue state:", customers);

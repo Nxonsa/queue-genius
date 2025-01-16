@@ -12,7 +12,6 @@ import { Users, Settings, Plus } from "lucide-react";
 import { Service } from "@/types/service";
 import { Counter } from "@/types/counter";
 import { Customer } from "@/types/customer";
-import MarketingSection from "./staff/MarketingSection";
 import CounterSection from "./staff/CounterSection";
 import ServiceSection from "./staff/ServiceSection";
 import QueueSection from "./staff/QueueSection";
@@ -39,7 +38,6 @@ const StaffDashboard: React.FC<StaffDashboardProps> = ({
   const [counters, setCounters] = React.useState<Counter[]>([
     { id: "1", name: "Counter 1", staffName: "John Doe", isActive: true },
   ]);
-  const [sheetsUrl, setSheetsUrl] = React.useState("");
 
   const handleCallNext = () => {
     console.log("Calling next customer");
@@ -108,9 +106,6 @@ const StaffDashboard: React.FC<StaffDashboardProps> = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem onClick={() => {}}>
-              View Marketing Data
-            </DropdownMenuItem>
             {isManager && (
               <>
                 <DropdownMenuItem onClick={addCounter}>
@@ -130,7 +125,6 @@ const StaffDashboard: React.FC<StaffDashboardProps> = ({
 
       {isManager && (
         <>
-          <MarketingSection sheetsUrl={sheetsUrl} setSheetsUrl={setSheetsUrl} />
           <CounterSection counters={counters} />
           <ServiceSection 
             services={services}
