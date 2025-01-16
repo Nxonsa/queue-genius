@@ -1,6 +1,7 @@
 import React from "react";
 import CheckInForm from "@/components/CheckInForm";
 import QueueDisplay from "@/components/QueueDisplay";
+import QRCodeDisplay from "@/components/QRCodeDisplay";
 import StaffDashboard from "@/components/StaffDashboard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
@@ -11,6 +12,9 @@ interface Customer {
   phone: string;
   position: number;
   waitTime: number;
+  marketingConsent: boolean;
+  queueId: string;
+  positionsPassed: number;
 }
 
 const Index = () => {
@@ -20,13 +24,17 @@ const Index = () => {
 
   console.log("Current queue state:", customers);
 
-  const handleCheckIn = (name: string, phone: string) => {
+  const handleCheckIn = (name: string, phone: string, marketingConsent: boolean) => {
+    const queueId = Math.random().toString(36).substr(2, 9);
     const newCustomer: Customer = {
       id: Math.random().toString(36).substr(2, 9),
       name,
       phone,
       position: customers.length + 1,
       waitTime: Math.floor(customers.length * 5),
+      marketingConsent,
+      queueId,
+      positionsPassed: 0,
     };
 
     setCustomers((prev) => [...prev, newCustomer]);
@@ -36,11 +44,26 @@ const Index = () => {
   const handleCallNext = () => {
     if (customers.length > 0) {
       const [next, ...rest] = customers;
-      setCustomers(rest.map((customer) => ({
-        ...customer,
-        position: customer.position - 1,
-        waitTime: Math.max(0, customer.waitTime - 5),
-      })));
+      setCustomers(rest.map((customer) => {
+        const newPosition = customer.position - 1;
+        const positionsPassed = customer.positionsPassed + 1;
+        
+        if (positionsPassed >= 3) {
+          toast({
+            title: "Customer Removed",
+            description: `${customer.name} has been removed after passing 3 positions`,
+            variant: "destructive",
+          });
+          return null;
+        }
+        
+        return {
+          ...customer,
+          position: newPosition,
+          waitTime: Math.max(0, customer.waitTime - 5),
+          positionsPassed,
+        };
+      }).filter(Boolean) as Customer[]);
     }
   };
 
@@ -83,11 +106,17 @@ const Index = () => {
           <TabsContent value="customer" className="space-y-6 animate-fade-in">
             <CheckInForm onCheckIn={handleCheckIn} />
             {currentCustomer && (
-              <QueueDisplay
-                position={currentCustomer.position}
-                estimatedWaitTime={currentCustomer.waitTime}
-                totalInQueue={customers.length}
-              />
+              <>
+                <QueueDisplay
+                  position={currentCustomer.position}
+                  estimatedWaitTime={currentCustomer.waitTime}
+                  totalInQueue={customers.length}
+                />
+                <QRCodeDisplay
+                  queueId={currentCustomer.queueId}
+                  position={currentCustomer.position}
+                />
+              </>
             )}
           </TabsContent>
 
@@ -96,6 +125,7 @@ const Index = () => {
               customers={customers}
               onCallNext={handleCallNext}
               onRemoveCustomer={handleRemoveCustomer}
+              isManager={true}
             />
           </TabsContent>
         </Tabs>

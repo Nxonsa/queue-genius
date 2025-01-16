@@ -2,21 +2,23 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
-import { UserPlus } from "lucide-react";
+import { UserPlus, Mail } from "lucide-react";
 
 interface CheckInFormProps {
-  onCheckIn: (name: string, phone: string) => void;
+  onCheckIn: (name: string, phone: string, marketingConsent: boolean) => void;
 }
 
 const CheckInForm: React.FC<CheckInFormProps> = ({ onCheckIn }) => {
   const [name, setName] = React.useState("");
   const [phone, setPhone] = React.useState("");
+  const [marketingConsent, setMarketingConsent] = React.useState(false);
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Check-in submitted:", { name, phone });
+    console.log("Check-in submitted:", { name, phone, marketingConsent });
 
     if (!name || !phone) {
       toast({
@@ -27,9 +29,10 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ onCheckIn }) => {
       return;
     }
 
-    onCheckIn(name, phone);
+    onCheckIn(name, phone, marketingConsent);
     setName("");
     setPhone("");
+    setMarketingConsent(false);
 
     toast({
       title: "Check-in Successful",
@@ -60,6 +63,23 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ onCheckIn }) => {
             onChange={(e) => setPhone(e.target.value)}
             className="w-full"
           />
+          
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="marketing"
+              checked={marketingConsent}
+              onCheckedChange={(checked) => setMarketingConsent(checked as boolean)}
+            />
+            <label
+              htmlFor="marketing"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              <div className="flex items-center space-x-2">
+                <Mail className="w-4 h-4" />
+                <span>Receive promotions and updates</span>
+              </div>
+            </label>
+          </div>
         </div>
 
         <Button type="submit" className="w-full">
