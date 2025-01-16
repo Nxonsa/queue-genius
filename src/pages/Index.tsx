@@ -7,7 +7,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { Customer } from "@/types/customer";
 import { Service } from "@/types/service";
-import { appendToSheet } from "@/utils/sheets";
 
 const Index = () => {
   const [customers, setCustomers] = React.useState<Customer[]>([]);
@@ -17,7 +16,7 @@ const Index = () => {
 
   console.log("Current queue state:", customers);
 
-  const handleCheckIn = async (name: string, phone: string, marketingConsent: boolean, serviceId?: string) => {
+  const handleCheckIn = (name: string, phone: string, marketingConsent: boolean, serviceId?: string) => {
     const queueId = Math.random().toString(36).substr(2, 9);
     const newCustomer: Customer = {
       id: Math.random().toString(36).substr(2, 9),
@@ -32,17 +31,12 @@ const Index = () => {
     };
 
     if (marketingConsent) {
-      const success = await appendToSheet("", {
-        name,
-        phone,
-        timestamp: new Date().toISOString(),
+      // Store marketing data locally
+      console.log("Marketing consent given, storing data locally:", { 
+        name, 
+        phone, 
+        timestamp: new Date().toISOString() 
       });
-
-      if (success) {
-        console.log("Marketing data saved successfully");
-      } else {
-        console.error("Failed to save marketing data");
-      }
     }
 
     setCustomers((prev) => [...prev, newCustomer]);

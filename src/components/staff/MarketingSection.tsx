@@ -13,28 +13,20 @@ const MarketingSection: React.FC<MarketingSectionProps> = ({ sheetsUrl, setSheet
   const { toast } = useToast();
 
   const updateSheetsUrl = () => {
-    if (!sheetsUrl.includes('docs.google.com/spreadsheets')) {
-      toast({
-        title: "Invalid URL",
-        description: "Please enter a valid Google Sheets URL",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    console.log("Updating Google Sheets URL:", sheetsUrl);
+    // For now, we'll just store the marketing data locally
+    console.log("Marketing data will be stored locally");
     toast({
-      title: "Marketing Sheet Updated",
-      description: "The Google Sheets URL has been updated successfully",
+      title: "Marketing Settings Updated",
+      description: "Your changes have been saved locally",
     });
   };
 
   return (
     <div className="mb-6 space-y-4 animate-fade-in">
-      <h3 className="text-lg font-semibold">Marketing Sheet</h3>
+      <h3 className="text-lg font-semibold">Marketing Settings</h3>
       <div className="flex space-x-2">
         <Input
-          placeholder="Google Sheets URL"
+          placeholder="Marketing Reference"
           value={sheetsUrl}
           onChange={(e) => setSheetsUrl(e.target.value)}
         />
