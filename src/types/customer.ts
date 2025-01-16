@@ -4,6 +4,8 @@ export interface Customer {
   phone: string;
   position: number;
   waitTime: number;
-  marketingConsent?: boolean;
+  marketingConsent: boolean;
+  queueId: string;
+  positionsPassed: number;
   serviceId?: string;
 }

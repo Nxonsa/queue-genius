@@ -5,19 +5,9 @@ import QRCodeDisplay from "@/components/QRCodeDisplay";
 import StaffDashboard from "@/components/StaffDashboard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
+import { Customer } from "@/types/customer";
 import { Service } from "@/types/service";
-
-interface Customer {
-  id: string;
-  name: string;
-  phone: string;
-  position: number;
-  waitTime: number;
-  marketingConsent: boolean;
-  queueId: string;
-  positionsPassed: number;
-  serviceId?: string;
-}
+import { appendToSheet } from "@/utils/sheets";
 
 const Index = () => {
   const [customers, setCustomers] = React.useState<Customer[]>([]);
@@ -27,7 +17,7 @@ const Index = () => {
 
   console.log("Current queue state:", customers);
 
-  const handleCheckIn = (name: string, phone: string, marketingConsent: boolean, serviceId?: string) => {
+  const handleCheckIn = async (name: string, phone: string, marketingConsent: boolean, serviceId?: string) => {
     const queueId = Math.random().toString(36).substr(2, 9);
     const newCustomer: Customer = {
       id: Math.random().toString(36).substr(2, 9),
@@ -42,12 +32,26 @@ const Index = () => {
     };
 
     if (marketingConsent) {
-      // Here you would integrate with Google Sheets API to store marketing data
-      console.log("Marketing consent given, storing data:", { name, phone });
+      const success = await appendToSheet("", {
+        name,
+        phone,
+        timestamp: new Date().toISOString(),
+      });
+
+      if (success) {
+        console.log("Marketing data saved successfully");
+      } else {
+        console.error("Failed to save marketing data");
+      }
     }
 
     setCustomers((prev) => [...prev, newCustomer]);
     setCurrentCustomer(newCustomer);
+
+    toast({
+      title: "Check-in Successful",
+      description: `You are number ${newCustomer.position} in the queue`,
+    });
   };
 
   const handleCallNext = () => {

@@ -1,7 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
 import { FileSpreadsheet } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -14,6 +13,15 @@ const MarketingSection: React.FC<MarketingSectionProps> = ({ sheetsUrl, setSheet
   const { toast } = useToast();
 
   const updateSheetsUrl = () => {
+    if (!sheetsUrl.includes('docs.google.com/spreadsheets')) {
+      toast({
+        title: "Invalid URL",
+        description: "Please enter a valid Google Sheets URL",
+        variant: "destructive",
+      });
+      return;
+    }
+
     console.log("Updating Google Sheets URL:", sheetsUrl);
     toast({
       title: "Marketing Sheet Updated",
