@@ -5,6 +5,7 @@ import QRCodeDisplay from "@/components/QRCodeDisplay";
 import StaffDashboard from "@/components/StaffDashboard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
+import { Service } from "@/types/service";
 
 interface Customer {
   id: string;
@@ -15,16 +16,18 @@ interface Customer {
   marketingConsent: boolean;
   queueId: string;
   positionsPassed: number;
+  serviceId?: string;
 }
 
 const Index = () => {
   const [customers, setCustomers] = React.useState<Customer[]>([]);
   const [currentCustomer, setCurrentCustomer] = React.useState<Customer | null>(null);
+  const [services, setServices] = React.useState<Service[]>([]);
   const { toast } = useToast();
 
   console.log("Current queue state:", customers);
 
-  const handleCheckIn = (name: string, phone: string, marketingConsent: boolean) => {
+  const handleCheckIn = (name: string, phone: string, marketingConsent: boolean, serviceId?: string) => {
     const queueId = Math.random().toString(36).substr(2, 9);
     const newCustomer: Customer = {
       id: Math.random().toString(36).substr(2, 9),
@@ -35,7 +38,13 @@ const Index = () => {
       marketingConsent,
       queueId,
       positionsPassed: 0,
+      serviceId,
     };
+
+    if (marketingConsent) {
+      // Here you would integrate with Google Sheets API to store marketing data
+      console.log("Marketing consent given, storing data:", { name, phone });
+    }
 
     setCustomers((prev) => [...prev, newCustomer]);
     setCurrentCustomer(newCustomer);
@@ -104,7 +113,7 @@ const Index = () => {
           </TabsList>
 
           <TabsContent value="customer" className="space-y-6 animate-fade-in">
-            <CheckInForm onCheckIn={handleCheckIn} />
+            <CheckInForm onCheckIn={handleCheckIn} services={services} />
             {currentCustomer && (
               <>
                 <QueueDisplay

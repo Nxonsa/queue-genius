@@ -5,34 +5,38 @@ import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
 import { UserPlus, Mail } from "lucide-react";
+import { Service } from "@/types/service";
 
 interface CheckInFormProps {
-  onCheckIn: (name: string, phone: string, marketingConsent: boolean) => void;
+  onCheckIn: (name: string, phone: string, marketingConsent: boolean, serviceId?: string) => void;
+  services: Service[];
 }
 
-const CheckInForm: React.FC<CheckInFormProps> = ({ onCheckIn }) => {
+const CheckInForm: React.FC<CheckInFormProps> = ({ onCheckIn, services }) => {
   const [name, setName] = React.useState("");
   const [phone, setPhone] = React.useState("");
   const [marketingConsent, setMarketingConsent] = React.useState(false);
+  const [selectedService, setSelectedService] = React.useState<string>("");
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Check-in submitted:", { name, phone, marketingConsent });
+    console.log("Check-in submitted:", { name, phone, marketingConsent, selectedService });
 
-    if (!name || !phone) {
+    if (!name || !phone || !selectedService) {
       toast({
         title: "Error",
-        description: "Please fill in all fields",
+        description: "Please fill in all fields and select a service",
         variant: "destructive",
       });
       return;
     }
 
-    onCheckIn(name, phone, marketingConsent);
+    onCheckIn(name, phone, marketingConsent, selectedService);
     setName("");
     setPhone("");
     setMarketingConsent(false);
+    setSelectedService("");
 
     toast({
       title: "Check-in Successful",
@@ -63,6 +67,27 @@ const CheckInForm: React.FC<CheckInFormProps> = ({ onCheckIn }) => {
             onChange={(e) => setPhone(e.target.value)}
             className="w-full"
           />
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Select Service</label>
+            <div className="grid grid-cols-2 gap-2">
+              {services.map((service) => (
+                <div key={service.id} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`service-${service.id}`}
+                    checked={selectedService === service.id}
+                    onCheckedChange={() => setSelectedService(service.id)}
+                  />
+                  <label
+                    htmlFor={`service-${service.id}`}
+                    className="text-sm"
+                  >
+                    {service.name}
+                  </label>
+                </div>
+              ))}
+            </div>
+          </div>
           
           <div className="flex items-center space-x-2">
             <Checkbox
