@@ -37,6 +37,9 @@ const StaffDashboard: React.FC<StaffDashboardProps> = ({
   const [isAnnouncing, setIsAnnouncing] = React.useState(false);
   const [counters, setCounters] = React.useState<Counter[]>([
     { id: "1", name: "Counter 1", staffName: "John Doe", isActive: true },
+    { id: "2", name: "Counter 2", staffName: "Jane Smith", isActive: true },
+    { id: "3", name: "Counter 3", staffName: "Mike Johnson", isActive: true },
+    { id: "4", name: "Counter 4", staffName: "Sarah Wilson", isActive: true },
   ]);
 
   const handleCallNext = () => {
@@ -125,7 +128,7 @@ const StaffDashboard: React.FC<StaffDashboardProps> = ({
 
       {isManager && (
         <>
-          <CounterSection counters={counters} />
+          <CounterSection counters={counters} setCounters={setCounters} />
           <ServiceSection 
             services={services}
             setServices={setServices}
