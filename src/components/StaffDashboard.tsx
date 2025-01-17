@@ -63,7 +63,7 @@ const StaffDashboard: React.FC<StaffDashboardProps> = ({
         activeCounter.name;
 
       // If ElevenLabs API key is not set, fallback to browser's speech synthesis
-      if (!process.env.VITE_ELEVENLABS_API_KEY) {
+      if (!import.meta.env.VITE_ELEVENLABS_API_KEY) {
         const utterance = new SpeechSynthesisUtterance(
           `Next customer, please proceed to ${counterName}`
         );
@@ -81,7 +81,7 @@ const StaffDashboard: React.FC<StaffDashboardProps> = ({
         try {
           // Use ElevenLabs for more natural voice
           await conversation.startSession({
-            agentId: process.env.VITE_ELEVENLABS_AGENT_ID,
+            agentId: import.meta.env.VITE_ELEVENLABS_AGENT_ID,
             overrides: {
               tts: {
                 voiceId: "EXAVITQu4vr4xnSDxMaL", // Sarah voice
