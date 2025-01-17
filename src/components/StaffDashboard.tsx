@@ -82,10 +82,18 @@ const StaffDashboard: React.FC<StaffDashboardProps> = ({
           // Use ElevenLabs for more natural voice
           await conversation.startSession({
             agentId: process.env.VITE_ELEVENLABS_AGENT_ID,
+            overrides: {
+              tts: {
+                voiceId: "EXAVITQu4vr4xnSDxMaL", // Sarah voice
+              },
+              agent: {
+                firstMessage: `Next customer, please proceed to ${counterName}`,
+              },
+            },
           });
 
-          const message = `Next customer, please proceed to ${counterName}`;
-          await conversation.speak({ text: message });
+          // Wait for a short duration to ensure the message is spoken
+          await new Promise(resolve => setTimeout(resolve, 3000));
 
           setIsAnnouncing(false);
           onCallNext();
@@ -183,7 +191,6 @@ const StaffDashboard: React.FC<StaffDashboardProps> = ({
       </div>
     </Card>
   );
-
 };
 
 export default StaffDashboard;
