@@ -16,6 +16,7 @@ import CounterSection from "./staff/CounterSection";
 import ServiceSection from "./staff/ServiceSection";
 import QueueSection from "./staff/QueueSection";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useConversation } from "@11labs/react";
 
 interface StaffDashboardProps {
   customers: Customer[];
@@ -37,14 +38,18 @@ const StaffDashboard: React.FC<StaffDashboardProps> = ({
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const [isAnnouncing, setIsAnnouncing] = React.useState(false);
+  const conversation = useConversation();
   const [counters, setCounters] = React.useState<Counter[]>([
     { id: "1", name: "Counter 1", staffName: "John Doe", isActive: true },
     { id: "2", name: "Counter 2", staffName: "Jane Smith", isActive: true },
     { id: "3", name: "Counter 3", staffName: "Mike Johnson", isActive: true },
     { id: "4", name: "Counter 4", staffName: "Sarah Wilson", isActive: true },
+    { id: "5", name: "Counter 5", staffName: "Emily Brown", isActive: true },
+    { id: "6", name: "Counter 6", staffName: "David Clark", isActive: true },
+    { id: "7", name: "Counter 7", staffName: "Lisa Anderson", isActive: true },
   ]);
 
-  const handleCallNext = () => {
+  const handleCallNext = async () => {
     console.log("Calling next customer");
     setIsAnnouncing(true);
     
@@ -57,19 +62,48 @@ const StaffDashboard: React.FC<StaffDashboardProps> = ({
         counters.find(c => c.id === service.counterId)?.name || activeCounter.name :
         activeCounter.name;
 
-      const utterance = new SpeechSynthesisUtterance(
-        `Customer number ${nextCustomer.position}, please proceed to ${counterName}`
-      );
-      window.speechSynthesis.speak(utterance);
+      // If ElevenLabs API key is not set, fallback to browser's speech synthesis
+      if (!process.env.VITE_ELEVENLABS_API_KEY) {
+        const utterance = new SpeechSynthesisUtterance(
+          `Next customer, please proceed to ${counterName}`
+        );
+        window.speechSynthesis.speak(utterance);
 
-      utterance.onend = () => {
-        setIsAnnouncing(false);
-        onCallNext();
-        toast({
-          title: "Customer Called",
-          description: `Now serving ${nextCustomer.name} at ${counterName}`,
-        });
-      };
+        utterance.onend = () => {
+          setIsAnnouncing(false);
+          onCallNext();
+          toast({
+            title: "Customer Called",
+            description: `Now serving next customer at ${counterName}`,
+          });
+        };
+      } else {
+        try {
+          // Use ElevenLabs for more natural voice
+          await conversation.startSession({
+            agentId: process.env.VITE_ELEVENLABS_AGENT_ID,
+          });
+
+          const message = `Next customer, please proceed to ${counterName}`;
+          await conversation.speak({ text: message });
+
+          setIsAnnouncing(false);
+          onCallNext();
+          toast({
+            title: "Customer Called",
+            description: `Now serving next customer at ${counterName}`,
+          });
+        } catch (error) {
+          console.error("Error with ElevenLabs voice:", error);
+          // Fallback to browser's speech synthesis
+          const utterance = new SpeechSynthesisUtterance(
+            `Next customer, please proceed to ${counterName}`
+          );
+          window.speechSynthesis.speak(utterance);
+        } finally {
+          await conversation.endSession();
+        }
+      }
     }
   };
 
@@ -149,6 +183,7 @@ const StaffDashboard: React.FC<StaffDashboardProps> = ({
       </div>
     </Card>
   );
+
 };
 
 export default StaffDashboard;
