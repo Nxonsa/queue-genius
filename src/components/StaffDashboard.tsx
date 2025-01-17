@@ -62,8 +62,11 @@ const StaffDashboard: React.FC<StaffDashboardProps> = ({
         counters.find(c => c.id === service.counterId)?.name || activeCounter.name :
         activeCounter.name;
 
-      // If ElevenLabs API key is not set, fallback to browser's speech synthesis
-      if (!import.meta.env.VITE_ELEVENLABS_API_KEY) {
+      const elevenLabsApiKey = import.meta.env.VITE_ELEVENLABS_API_KEY;
+      const elevenLabsAgentId = import.meta.env.VITE_ELEVENLABS_AGENT_ID;
+
+      if (!elevenLabsApiKey) {
+        console.log("Using browser speech synthesis");
         const utterance = new SpeechSynthesisUtterance(
           `Next customer, please proceed to ${counterName}`
         );
@@ -79,9 +82,9 @@ const StaffDashboard: React.FC<StaffDashboardProps> = ({
         };
       } else {
         try {
-          // Use ElevenLabs for more natural voice
+          console.log("Using ElevenLabs for voice synthesis");
           await conversation.startSession({
-            agentId: import.meta.env.VITE_ELEVENLABS_AGENT_ID,
+            agentId: elevenLabsAgentId,
             overrides: {
               tts: {
                 voiceId: "EXAVITQu4vr4xnSDxMaL", // Sarah voice
@@ -92,7 +95,6 @@ const StaffDashboard: React.FC<StaffDashboardProps> = ({
             },
           });
 
-          // Wait for a short duration to ensure the message is spoken
           await new Promise(resolve => setTimeout(resolve, 3000));
 
           setIsAnnouncing(false);
@@ -103,7 +105,6 @@ const StaffDashboard: React.FC<StaffDashboardProps> = ({
           });
         } catch (error) {
           console.error("Error with ElevenLabs voice:", error);
-          // Fallback to browser's speech synthesis
           const utterance = new SpeechSynthesisUtterance(
             `Next customer, please proceed to ${counterName}`
           );
